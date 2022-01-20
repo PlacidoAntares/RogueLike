@@ -15,43 +15,38 @@ public class RoomInfo : MonoBehaviour
     private GenerateRooms GenRooms;
     private RoomTemplates RoomTemp;
 
-    void Start()
+    void Awake()
     {
         roomSpawner = this.gameObject;
         RoomTemp = GameObject.FindGameObjectWithTag("Rooms").GetComponent<RoomTemplates>();
         GenRooms = GameObject.FindGameObjectWithTag("R_Gen").GetComponent<GenerateRooms>();
-        GenRooms.Rooms.Add(this.gameObject);
-        GenRooms.roomProp.Add(roomSpawner.GetComponent<RoomInfo>());
-        if (GenRooms.Rooms.Count < GenRooms.MaxRoomCount)
-        {
-            Invoke("InvokeSpawnRoom", 0.5f);
-        }
-        else if (GenRooms.Rooms.Count >= GenRooms.MaxRoomCount)
-        {
-            Invoke("CloseRoom", 0.5f);
-        }
-
-
+        //Debug.Log(GenRooms + " this is at void start");
+        Invoke("InstantiateRoom", 0.1f);
+             
     }
 
-   
-    private void InvokeSpawnRoom()
+   void InstantiateRoom()
     {
-        GenRooms.SpawnRoom(roomSpawner.transform.position, roomSpawned, RoomType);
+        if (roomSpawned == false)
+        {
+            GenRooms.SpawnRoom(this.gameObject.transform.position, RoomType);
+        }
+       roomSpawned = true;
     }
-    private void CloseRoom()
-    {      
-        GenRooms.SpawnRoom(roomSpawner.transform.position, roomSpawned, 0);
-    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "SpawnPoint" || other.gameObject.tag == "GeneratedRoom")
+        if (other.CompareTag("SpawnPoint"))
         {
+            if (other.GetComponent<RoomInfo>().roomSpawned == false && roomSpawned == false && other.gameObject != null)
+            {
+                //Debug.Log(GenRooms);
+                GenRooms.SpawnRoom(this.gameObject.transform.position,0);
+                Destroy(gameObject);
+            }
             roomSpawned = true;
-            this.gameObject.SetActive(false);
-            Debug.Log("SpawnerDisabled");
         }
-
     }
+
 
 }

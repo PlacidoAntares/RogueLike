@@ -19,6 +19,7 @@ public class RoomTemplates : MonoBehaviour
     public List<GameObject> rooms;
 
     public float waitTime;
+    public int roomCounter;
     public bool spawnedBoss;
     public GameObject boss;
 
